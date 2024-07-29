@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <script src="https://www.webglearth.com/v2/api.js"></script>
+    <script>
+      var earth;
+      var startPosition = [55.7558, 37.6176]; // Начальная позиция: Москва
+      var resetLongitude = 92; // Долгота Красноярска
+      var direction = 1; // Направление движения: 1 - вперед, -1 - назад
+
+      function initialize() {
+        earth = new WE.map('earth_div');
+        earth.setView(startPosition, 4);
+        WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
+        }).addTo(earth);
+
+        var polygonA = WE.polygon([[69.7948444, 30.8176414],
+    [70.0996777, 31.4448003],
+    [70.1320456, 32.2627666],
+    [69.5802954, 34.274618],
+    [69.265874, 36.5888164],
+    [68.4722913, 39.177328],
+    [68.3745722, 39.759706],
+    [68.5976645, 41.3125962],
+    [66.9902391, 42.5057036],
+    [65.9149609, 39.7296661],
+    [65.691813, 38.2907354],
+    [65.7900005, 36.0189292],
+    [66.5493796, 33.2333078],
+    [66.5822128, 32.5871139],
+    [66.3453928, 32.3426614],
+    [66.3510469, 31.9369838],
+    [66.6540029, 31.5758572],
+    [66.6621388, 29.3231909],
+    [66.9615249, 29.0409535],
+    [67.6735368, 30.0170617],
+    [68.0745393, 29.3270935],
+    [68.1963023, 28.6461349],
+    [68.539671, 28.433932],
+    [68.8692833, 28.8007886],
+    [68.9154506, 28.4157885],
+    [69.0152255, 29.0566538],
+    [69.2979319, 29.2923407],
+    [69.4246791, 30.0345285],
+    [69.5505719, 30.1855994],
+    [69.6580972, 30.0852915],
+    [69.5610273, 30.9389429],
+    [69.7948444, 30.8176414]
+        ]
+                );
+        polygonA.addTo(earth);
+
+        // Start a simple rotation animation
+        var before = null;
+        requestAnimationFrame(function animate(now) {
+          var c = earth.getPosition();
+          var elapsed = before ? now - before : 0;
+          before = now;
+
+          // Calculate new longitude based on the direction
+          var newLongitude = c[1] + direction * 0.1 * (elapsed / 90);
+
+          // Check if we reached the reset longitude or the starting point
+          if (newLongitude >= resetLongitude || newLongitude <= startPosition[1]) {
+            direction *= -1; // Change direction
+          }
+
+          earth.setCenter([c[0], newLongitude]);
+          requestAnimationFrame(animate);
+        });
+      }
+    </script>
+    <style>
+      html, body { padding: 0; margin: 0; }
+      #earth_div { top: 0; right: 0; bottom: 0; left: 0; position: absolute !important; }
+    </style>
+    <title>WebGL Earth API v2 examples: Rotating globe animation</title>
+    <meta name="description" content="Free and open-source 3D digital globe for web and mobile devices. This example shows how to rotate the Earth in a beautiful animation.">
+  </head>
+  <body onload="initialize()">
+    <div id="earth_div"></div>
+  </body>
+</html>
